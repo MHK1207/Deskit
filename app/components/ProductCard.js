@@ -1,6 +1,9 @@
+
+
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { colors, spacing } from '@/app/theme';
 
 export default function ProductCard({ product }) {
@@ -101,86 +104,89 @@ export default function ProductCard({ product }) {
     }
   };
 
-  return (
-    <div
-      style={{
-        ...styles.card,
-        ...(isHovered && styles.cardHover),
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Image Container */}
-      <div style={styles.imageContainer}>
-        {/* Primary Image */}
-        {product.images && product.images[0] && (
-          <img
-            src={product.images[0].url}
-            alt={product.name}
-            style={{
-              ...styles.image,
-              ...styles.primaryImage,
-            }}
-          />
-        )}
+return (
+    <Link href={`/products/${product.id}`} style={{ textDecoration: 'none' }}>
+      <div
+        style={{
+          ...styles.card,
+          ...(isHovered && styles.cardHover),
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Rest of the component stays the same */}
+        {/* Image Container */}
+        <div style={styles.imageContainer}>
+          {/* Primary Image */}
+          {product.images && product.images[0] && (
+            <img
+              src={product.images[0].url}
+              alt={product.name}
+              style={{
+                ...styles.image,
+                ...styles.primaryImage,
+              }}
+            />
+          )}
 
-        {/* Secondary Image (detailed) */}
-        {product.images && product.images[1] ? (
-          <img
-            src={product.images[1].url}
-            alt={`${product.name} detailed`}
-            style={{
-              ...styles.image,
-              ...styles.secondaryImage,
-            }}
-          />
-        ) : product.images && product.images[0] ? (
-          // If no second image, show same image
-          <img
-            src={product.images[0].url}
-            alt={product.name}
-            style={{
-              ...styles.image,
-              ...styles.secondaryImage,
-            }}
-          />
-        ) : null}
-      </div>
-
-      {/* Content */}
-      <div style={styles.content}>
-        <h3 style={styles.name}>{product.name}</h3>
-        <div style={styles.price}>PKR {product.price.toLocaleString()}</div>
-
-        {/* Status Badge */}
-        <div
-          style={{
-            ...styles.statusBadge,
-            backgroundColor: getStatusColor(product.stockStatus),
-            color: colors.primary,
-          }}
-        >
-          {product.stockStatus}
+          {/* Secondary Image (detailed) */}
+          {product.images && product.images[1] ? (
+            <img
+              src={product.images[1].url}
+              alt={`${product.name} detailed`}
+              style={{
+                ...styles.image,
+                ...styles.secondaryImage,
+              }}
+            />
+          ) : product.images && product.images[0] ? (
+            <img
+              src={product.images[0].url}
+              alt={product.name}
+              style={{
+                ...styles.image,
+                ...styles.secondaryImage,
+              }}
+            />
+          ) : null}
         </div>
 
-        {/* Description */}
-        {product.description && (
-          <p style={styles.description}>{product.description.substring(0, 80)}...</p>
-        )}
+        {/* Content */}
+        <div style={styles.content}>
+          <h3 style={styles.name}>{product.name}</h3>
+          <div style={styles.price}>PKR {product.price.toLocaleString()}</div>
 
-        {/* Add to Cart Button */}
-        <button
-          style={{
-            ...styles.button,
-            ...(isHovered && styles.buttonHover),
-            opacity: product.stockStatus === 'out-of-stock' ? 0.5 : 1,
-          }}
-          disabled={product.stockStatus === 'out-of-stock'}
-        >
-          {product.stockStatus === 'out-of-stock' ? 'Out of Stock' : 'Add to Cart'}
-        </button>
+          {/* Status Badge */}
+          <div
+            style={{
+              ...styles.statusBadge,
+              backgroundColor: getStatusColor(product.stockStatus),
+              color: colors.primary,
+            }}
+          >
+            {product.stockStatus}
+          </div>
+
+          {/* Description */}
+          {product.description && (
+            <p style={styles.description}>{product.description.substring(0, 80)}...</p>
+          )}
+
+          {/* Add to Cart Button */}
+          <button
+            style={{
+              ...styles.button,
+              ...(isHovered && styles.buttonHover),
+              opacity: product.stockStatus === 'out-of-stock' ? 0.5 : 1,
+            }}
+            disabled={product.stockStatus === 'out-of-stock'}
+            onClick={(e) => e.preventDefault()}
+          >
+            {product.stockStatus === 'out-of-stock' ? 'Out of Stock' : 'Add to Cart'}
+          </button>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

@@ -1,5 +1,6 @@
 import { db } from './firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
+import { getDoc } from 'firebase/firestore';
 
 // Add a new product
 export const addProduct = async (productData) => {
@@ -49,3 +50,55 @@ export const deleteProduct = async (id) => {
     throw error;
   }
 };
+
+// Get a single product by ID
+export const getProductById = async (id) => {
+  try {
+    const docRef = doc(db, 'products', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting product:', error);
+    throw error;
+  }
+};
+
+// Add a review to a product
+export const addReview = async (productId, reviewData) => {
+  try {
+    const reviewsRef = collection(db, 'products', productId, 'reviews');
+    const docRef = await addDoc(reviewsRef, {
+      ...reviewData,
+      createdAt: new Date(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding review:', error);
+    throw error;
+  }
+};
+
+// Get reviews for a product
+export const getProductReviews = async (productId) => {
+  try {
+    const q = query(
+      collection(db, 'products', productId, 'reviews'),
+      orderBy('createdAt', 'desc')
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error('Error getting reviews:', error);
+    return [];
+  }
+};
+
