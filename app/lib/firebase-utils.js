@@ -101,4 +101,62 @@ export const getProductReviews = async (productId) => {
     return [];
   }
 };
+// Add an order
+export const createOrder = async (orderData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'orders'), {
+      ...orderData,
+      status: 'pending', // pending, confirmed, dispatched
+      createdAt: new Date(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating order:', error);
+    throw error;
+  }
+};
+
+// Get all orders
+export const getOrders = async () => {
+  try {
+    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error('Error getting orders:', error);
+    return [];
+  }
+};
+
+// Update order status
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    await updateDoc(doc(db, 'orders', orderId), { status });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    throw error;
+  }
+};
+
+// Get single order
+export const getOrderById = async (orderId) => {
+  try {
+    const docRef = doc(db, 'orders', orderId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting order:', error);
+    throw error;
+  }
+};
+
 
