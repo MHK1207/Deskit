@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import ReviewForm from '@/app/components/ReviewForm';
 import { getProductById, getProductReviews, addReview } from '@/app/lib/firebase-utils';
 import { colors, spacing } from '@/app/theme';
+import { useCart } from '@/app/lib/CartContext';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -15,6 +16,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { addToCart } = useCart();
 
   // Fetch product and reviews
   useEffect(() => {
@@ -339,13 +341,17 @@ export default function ProductDetailPage() {
 
             {/* Add to Cart Button */}
             <button
-              style={{
+            style={{
                 ...styles.addToCartButton,
                 opacity: product.stockStatus === 'out-of-stock' ? 0.5 : 1,
-              }}
-              disabled={product.stockStatus === 'out-of-stock'}
+            }}
+            disabled={product.stockStatus === 'out-of-stock'}
+            onClick={() => {
+                addToCart(product);
+                alert('Added to cart!');
+            }}
             >
-              {product.stockStatus === 'out-of-stock' ? 'Out of Stock' : 'Add to Cart'}
+            {product.stockStatus === 'out-of-stock' ? 'Out of Stock' : 'Add to Cart'}
             </button>
           </div>
         </div>
