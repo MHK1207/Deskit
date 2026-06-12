@@ -1,4 +1,5 @@
 import './globals.css';
+import CursorLight from '@/app/components/CursorLight';
 import CartSidebar from '@/app/components/CartSidebar';
 import { CartProvider } from '@/app/lib/CartContext';
 
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <CartProvider>
+          <CursorLight />
           {children}
           <CartSidebar />
         </CartProvider>
